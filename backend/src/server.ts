@@ -1,10 +1,10 @@
 import { Server } from 'http';
+import config from './app/config';
 import app from './app';
-import config from './app/config/index';
 
 const main = async () => {
   const server: Server = app.listen(config.port, () => {
-    console.log('Lagbe Kisu E-commerce is running on port', config.port);
+    console.log('Real Time Chat app is running on port at', config.port);
   });
 
   const exitHandler = () => {
