@@ -1,9 +1,12 @@
 import config from '../../config';
 import catchAsync from '../../utils/catchAsync';
+import { sendWelcomeEmail } from '../../utils/emailHandler';
 import { userServices } from './user.service';
 
 const registerUser = catchAsync(async (req, res) => {
   const result = await userServices.registerUserIntoDB(req.body);
+
+  await sendWelcomeEmail(result?.email, result?.name, config.client_url);
 
   res.status(201).json({
     success: true,
