@@ -19,4 +19,6 @@ export default {
   resend_api_key: process.env.RESEND_API_KEY as string,
   email_from: process.env.EMAIL_FROM as string,
   email_from_name: process.env.EMAIL_FROM_NAME as string,
+  arcjet_key: process.env.ARCJET_API_KEY as string,
+  arcjet_env: process.env.ARCJET_ENV as string,
 };

@@ -3,8 +3,11 @@ import { userControllers } from './user.controller';
 import isValid from '../../middlewares/isValid';
 import { userValidation } from './user.validation';
 import isAuth from '../../middlewares/isAuth';
+import { arcjetProtection } from '../../middlewares/arcjetProtection';
 
 const router = express.Router();
+
+router.use(arcjetProtection);
 
 router.post(
   '/register',
