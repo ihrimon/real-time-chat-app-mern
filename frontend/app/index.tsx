@@ -21,7 +21,7 @@ const SplashScreen = () => {
       />
 
       <Animated.Image
-        source={require('../assets/images/splashImage.png')}
+        source={require('../assets/images/bg-pattern.png')}
         entering={FadeInDown.duration(700).springify()}
         style={styles.logo}
         resizeMode={'contain'}

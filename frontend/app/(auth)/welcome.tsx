@@ -10,7 +10,7 @@ import Animated, { FadeIn } from 'react-native-reanimated';
 const Welcome = () => {
   const router = useRouter();
   return (
-    <ScreenWrapper showPattern={true} bgOpacity={0.5}>
+    <ScreenWrapper showPattern={true} bgOpacity={10}>
       <View style={styles.container}>
         <View style={{ alignItems: 'center' }}>
           <Typo color={colors.white} size={43} fontWeight={'900'}>
@@ -19,7 +19,7 @@ const Welcome = () => {
         </View>
         <Animated.Image
           entering={FadeIn.duration(700).springify()}
-          source={require('../assets/images/welcome.png')}
+          source={require('../../assets/images/welcome.png')}
           style={styles.welcomeImage}
           resizeMode={'contain'}
         />
@@ -36,8 +36,9 @@ const Welcome = () => {
           </Typo>
         </View>
 
-        <Button style={{ backgroundColor: colors.white }}
-        onPress={() => router.push('/(auth)/register')}
+        <Button
+          style={{ backgroundColor: colors.white }}
+          onPress={() => router.push('/(auth)/register')}
         >
           <Typo size={23} fontWeight={'bold'}>
             Get Started
