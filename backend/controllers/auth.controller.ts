@@ -1,6 +1,7 @@
+import bcrypt from 'bcryptjs';
 import { Request, Response } from 'express';
 import User from '../models/user.model';
-import bcrypt from 'bcryptjs'
+import { generateToken } from '../utils/token';
 
 export const registerUser = async (
   req: Request,
@@ -32,17 +33,46 @@ export const registerUser = async (
     await user.save();
 
     // genarate token
+    const token = generateToken(user);
 
     res.json({
-        success: true,
-    })
+      success: true,
+      token,
+    });
   } catch (error: any) {
     console.log('error: ', error);
     res.status(500).json({ success: false, message: ' Server error' });
   }
 };
 
-export const loginUser = async (
-  req: Request,
-  res: Response
-): Promise<void> => {};
+export const loginUser = async (req: Request, res: Response): Promise<void> => {
+  const { email, password } = req.body;
+
+  try {
+    // find user
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      res.status(400).json({ success: false, message: 'Invalid credentials' });
+      return;
+    }
+
+    // compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      res.status(400).json({ success: false, message: 'Invalid credentials' });
+      return;
+    }
+    // genarate token
+    const token = generateToken(user);
+
+    res.json({
+      success: true,
+      token,
+    });
+  } catch (error: any) {
+    console.log('error: ', error);
+    res.status(500).json({ success: false, message: ' Server error' });
+  }
+};
