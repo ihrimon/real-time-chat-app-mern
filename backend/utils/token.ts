@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import config from '../config/env.config';
 import { UserProps } from '../types';
 
@@ -12,7 +12,11 @@ export const generateToken = (user: UserProps) => {
     },
   };
 
-  return jwt.sign(payload, config.jwt_access_secret as string, {
-    expiresIn: config.jwt_access_expires_in,
-  });
+  return jwt.sign(
+    payload,
+    config.jwt_access_secret as string,
+    {
+      expiresIn: config.jwt_access_expires_in,
+    } as SignOptions
+  );
 };

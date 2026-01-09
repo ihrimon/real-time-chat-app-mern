@@ -8,6 +8,7 @@ export const registerUser = async (
   res: Response
 ): Promise<void> => {
   const { email, password, name, avatar } = req.body;
+  console.log(email, password, name, 'from frontend')
 
   try {
     let user = await User.findOne({ email });
@@ -34,6 +35,7 @@ export const registerUser = async (
 
     // genarate token
     const token = generateToken(user);
+    console.log(token, 'token log from server')
 
     res.json({
       success: true,
