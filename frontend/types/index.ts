@@ -69,7 +69,7 @@ export type ScreenWrapperProps = {
 export type ResponseProps = {
   success: boolean;
   data?: any;
-  msg?: string;
+  message?: string;
 };
 
 export interface ButtonProps extends TouchableOpacityProps {
