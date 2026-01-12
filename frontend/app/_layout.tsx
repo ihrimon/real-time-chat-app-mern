@@ -2,7 +2,14 @@ import { AuthProvider } from '@/contexts/authContext';
 import { Stack } from 'expo-router';
 
 const StackLayout = () => {
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen
+        name='(main)/profileModal'
+        options={{ presentation: 'modal' }}
+      />
+    </Stack>
+  );
 };
 
 const RootLayout = () => {
@@ -14,4 +21,3 @@ const RootLayout = () => {
 };
 
 export default RootLayout;
-
