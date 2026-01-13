@@ -1,7 +1,7 @@
 import { colors, radius } from '@/constants/theme';
 import { ButtonProps } from '@/types';
 import { verticalScale } from '@/utils/styling';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Loading from './Loading';
 
 const Button = ({ style, onPress, children, loading = false }: ButtonProps) => {
@@ -14,7 +14,11 @@ const Button = ({ style, onPress, children, loading = false }: ButtonProps) => {
   }
   return (
     <TouchableOpacity onPress={onPress} style={[styles.button, style]}>
-      {children}
+      {typeof children === 'string' ? (
+        <Text style={styles.text}>{children}</Text>
+      ) : (
+        children
+      )}
     </TouchableOpacity>
   );
 };
@@ -29,5 +33,10 @@ const styles = StyleSheet.create({
     height: verticalScale(56),
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  text: {
+    color: colors.white,
+    fontSize: verticalScale(16),
+    fontWeight: '600',
   },
 });

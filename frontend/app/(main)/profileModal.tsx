@@ -183,22 +183,6 @@ const ProfileModal = () => {
                 }
               />
             </View>
-            <View style={styles.inputContainer}>
-              <Typo style={{ paddingLeft: spacingX._10 }}>Email</Typo>
-
-              <Input
-                value={userData.email}
-                containerStyle={{
-                  borderColor: colors.neutral350,
-                  paddingLeft: spacingX._20,
-                  backgroundColor: colors.neutral300,
-                }}
-                editable={false}
-                onChangeText={(value) =>
-                  setUserData({ ...userData, email: value })
-                }
-              />
-            </View>
           </View>
         </ScrollView>
       </View>
@@ -216,11 +200,21 @@ const ProfileModal = () => {
               size={verticalScale(30)}
               color={colors.white}
               weight='bold'
-            />{' '}
+            />
           </Button>
         )}
 
-        <Button onPress={onSubmit}> Update</Button>
+        <Button
+          onPress={onSubmit}
+          style={{
+            flex: 1, 
+            maxWidth: 300, 
+            height: verticalScale(56),
+            justifyContent: 'center',
+          }}
+        >
+          Update
+        </Button>
       </View>
     </ScreenWrapper>
   );
