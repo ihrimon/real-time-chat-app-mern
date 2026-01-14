@@ -2,6 +2,47 @@ import { Socket, Server as SocketIOServer } from 'socket.io';
 import Conversation from '../models/conversation.model';
 
 const registerChatEvents = async (io: SocketIOServer, socket: Socket) => {
+  socket.on('getConversations', async () => {
+    console.log('getConversations event');
+
+    try {
+      const userId = socket.data.userId;
+
+      if (!userId) {
+        socket.emit('getConversations', {
+          success: false,
+          message: 'Unauthorized',
+        });
+        return;
+      }
+
+      // find all conversations where user is a participant
+      const conversations = await Conversation.find({
+        participants: userId,
+      })
+        .sort({ updatedAt: -1 })
+        .populate({
+          path: 'lastMessage',
+          select: 'Content senderId attachment createdAt',
+        })
+        .populate({
+          path: 'participants',
+          select: 'name avatar email',
+        }).lean();
+
+        socket.emit('getConversations', {success: true,
+          data: conversations
+        })
+
+    } catch (error: any) {
+      console.log('getConversations error: ', error);
+      socket.emit('getConversations', {
+        success: false,
+        message: 'Failed to fetch conversation',
+      });
+    }
+  });
+
   socket.on('newConversation', async (data: any) => {
     console.log('newConversation event: ', data);
   });
