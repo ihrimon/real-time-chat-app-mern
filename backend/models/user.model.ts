@@ -1,7 +1,7 @@
 import { model, Schema } from 'mongoose';
 import { UserProps } from '../types';
 
-const UserSchema = new Schema<UserProps>({
+const userSchema = new Schema<UserProps>({
   email: {
     type: String,
     required: true,
@@ -27,4 +27,6 @@ const UserSchema = new Schema<UserProps>({
   },
 });
 
-export default model<UserProps>('User', UserSchema);
+const User =  model<UserProps>('User', userSchema);
+
+export default User;

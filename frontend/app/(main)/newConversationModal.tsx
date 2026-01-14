@@ -7,10 +7,12 @@ import ScreenWrapper from '@/components/ScreenWrapper';
 import Typo from '@/components/Typo';
 import { colors, radius, spacingX, spacingY } from '@/constants/theme';
 import { useAuth } from '@/contexts/authContext';
+import { uploadFileToCloudinary } from '@/services/imageService';
+import { getContacts, newConversation } from '@/socket/socket-events';
 import { verticalScale } from '@/utils/styling';
 import * as ImagePicker from 'expo-image-picker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   ScrollView,
@@ -19,23 +21,11 @@ import {
   View,
 } from 'react-native';
 
-const contacts = [
-  {
-    id: '1',
-    name: 'Liam Carter',
-    avatar: 'https://i.pravatar.cc/150?img=11',
-  },
-  {
-    id: '2',
-    name: 'Emma Davis',
-    avatar: 'https://i.pravatar.cc/150?img=12',
-  },
-];
-
 const NewConversatonModal = () => {
   const { isGroup } = useLocalSearchParams();
   const isGroupMode = isGroup === '1';
   const router = useRouter();
+  const [contacts, setContacts] = useState([]);
   const [groupAvatar, setGroupAvatar] = useState<{ uri: string } | null>(null);
   const [groupName, setGroupName] = useState('');
   const [selectedParticipants, setSelectedParticipants] = useState<string[]>(
@@ -43,6 +33,46 @@ const NewConversatonModal = () => {
   );
   const [isLoading, setIsLoading] = useState(false);
   const { user: currentUser } = useAuth();
+
+  useEffect(() => {
+    getContacts(processGetContacts);
+    newConversation(processNewConversation);
+    getContacts(null);
+
+    return () => {
+      getContacts(processGetContacts, true);
+      newConversation(processNewConversation, true);
+    };
+  }, []);
+
+  const processGetContacts = (res: any) => {
+    console.log('Got contacts', res);
+
+    if (res.success) {
+      setContacts(res.data);
+    }
+  };
+
+  const processNewConversation = (res: any) => {
+    console.log('New conversation result', res.data.participants);
+    setIsLoading(false);
+    if (res.success) {
+      router.back();
+      router.push({
+        pathname: '/(main)/conversation',
+        params: {
+          id: res.data._id,
+          name: res.data.name,
+          avatar: res.data.avatar,
+          type: res.data.type,
+          participants: JSON.stringify(res.data.participants),
+        },
+      });
+    } else {
+      console.log('Error fetching/creating conversation: ', res.message);
+      Alert.alert('Error', res.message);
+    }
+  };
 
   const onPickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -78,6 +108,10 @@ const NewConversatonModal = () => {
       toggleParticipant(user);
     } else {
       // start new conversation
+      newConversation({
+        type: 'direct',
+        participants: [currentUser.id, user.id],
+      });
     }
   };
 
@@ -86,6 +120,35 @@ const NewConversatonModal = () => {
       return;
 
     // create new gorup
+
+    setIsLoading(true);
+
+    try {
+      let avatar = null;
+
+      if (groupAvatar) {
+        const uploadResult = await uploadFileToCloudinary(
+          groupAvatar,
+          'group-avatar'
+        );
+
+        if (uploadResult.success) {
+          avatar = uploadResult.data;
+        }
+
+        newConversation({
+          type: 'group',
+          participants: [currentUser.id, ...selectedParticipants],
+          name: groupName,
+          avatar,
+        });
+      }
+    } catch (error: any) {
+      console.log('Error', error);
+      Alert.alert('Error: ', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

@@ -36,4 +36,38 @@ export const updateProfile = (payload: any, off: boolean = false) => {
   }
 };
 
+export const getContacts = (payload: any, off: boolean = false) => {
+  const socket = getSocket();
 
+  if (!socket) {
+    console.log('Socket is not connected');
+    return;
+  }
+
+  if (off) {
+    // turn off listing to this event
+    socket.off('getContacts', payload);
+  } else if (typeof payload === 'function') {
+    socket.on('getContacts', payload); // payload as callback for this event
+  } else {
+    socket.emit('getContacts', payload); // sending payload as data
+  }
+};
+
+export const newConversation = (payload: any, off: boolean = false) => {
+  const socket = getSocket();
+
+  if (!socket) {
+    console.log('Socket is not connected');
+    return;
+  }
+
+  if (off) {
+    // turn off listing to this event
+    socket.off('newConversation', payload);
+  } else if (typeof payload === 'function') {
+    socket.on('newConversation', payload); // payload as callback for this event
+  } else {
+    socket.emit('newConversation', payload); // sending payload as data
+  }
+};
